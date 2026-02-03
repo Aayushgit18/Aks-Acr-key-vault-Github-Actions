@@ -21,25 +21,21 @@ spec:
           ports:
             - containerPort: 8080
 
-          # Application config (no secrets hardcoded)
+          # ✅ Spring Boot native configuration (THIS is the key)
           env:
-            - name: DB_HOST
-              value: {{ .Values.mysql.host | quote }}
-            - name: DB_PORT
-              value: "{{ .Values.mysql.port }}"
-            - name: DB_NAME
-              value: {{ .Values.mysql.database | quote }}
-            - name: DB_USER
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql:3306/bookDatabase"
+            - name: SPRING_DATASOURCE_USERNAME
               value: root
-            - name: DB_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               value: ""
 
-          # ✅ Correct way to inject CSI secret and start Spring Boot
+          # ✅ Inject password from Azure Key Vault via CSI
           command:
             - sh
             - -c
             - |
-              export DB_PASSWORD=$(cat /mnt/secrets/{{ .Values.keyVault.secrets.rootPassword }});
+              export SPRING_DATASOURCE_PASSWORD=$(cat /mnt/secrets/{{ .Values.keyVault.secrets.rootPassword }});
               exec java -jar app.jar
 
           volumeMounts:
