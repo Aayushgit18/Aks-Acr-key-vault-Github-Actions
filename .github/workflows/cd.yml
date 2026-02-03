@@ -1,36 +1,59 @@
-name: CD - Deploy to AKS
+name: CD - Deploy to AKS using Helm
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["CI - Build and Push Images to ACR"]
     types:
       - completed
 
-  workflow_dispatch:
+env:
+  AKS_RG: aks-dev-rg
+  AKS_NAME: aks-dev
+  ACR_LOGIN_SERVER: acrdevayu2026512.azurecr.io
 
 jobs:
   deploy:
-    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Login to Azure
+        uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Set AKS context
-        uses: azure/aks-set-context@v3
-        with:
-          resource-group: rg-3tier-aks
-          cluster-name: aks-3tier
+        run: |
+          az aks get-credentials \
+            --resource-group $AKS_RG \
+            --name $AKS_NAME \
+            --admin
 
-      - name: Setup Helm
+      - name: Install Helm
         uses: azure/setup-helm@v4
 
-      - name: Deploy using Helm
+      # -------------------------
+      # Deploy MySQL (idempotent)
+      # -------------------------
+      - name: Deploy MySQL
         run: |
-          helm upgrade --install mybook ./helm/mybookcollection
+          helm upgrade --install mysql ./helm/mysql
+
+      # -------------------------
+      # Deploy Spring Boot
+      # -------------------------
+      - name: Deploy Spring Boot
+        run: |
+          helm upgrade --install springboot ./helm/springboot \
+            --set image.tag=${{ github.event.workflow_run.head_sha }}
+
+      # -------------------------
+      # Deploy Angular
+      # -------------------------
+      - name: Deploy Angular
+        run: |
+          helm upgrade --install angular ./helm/angular \
+            --set image.tag=${{ github.event.workflow_run.head_sha }}
