@@ -17,7 +17,9 @@ persistence:
 keyVault:
   name: kv-aks-dev-aayush1290
   tenantId: aac42910-b03a-44c1-b372-7cee5c67a2d5
-  identityClientId: 585cb9d9-7140-4184-a4e2-96f1a146f14f
+
+  # 🔥 THIS MUST BE KUBELET CLIENT ID
+  identityClientId: 6e1da3d0-626b-4321-a6c1-8ed6c4800f00
 
   secrets:
     rootPassword: mysql-root-password
