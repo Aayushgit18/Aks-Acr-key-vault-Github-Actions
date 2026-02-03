@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: springboot
+  labels:
+    app: springboot
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -25,6 +27,8 @@ spec:
               value: {{ .Values.mysql.host | quote }}
             - name: DB_PORT
               value: "{{ .Values.mysql.port }}"
+            - name: DB_NAME
+              value: {{ .Values.mysql.database | quote }}
             - name: DB_USER
               value: root
             - name: DB_PASSWORD
@@ -54,4 +58,3 @@ spec:
             readOnly: true
             volumeAttributes:
               secretProviderClass: mysql-azure-kv
-
