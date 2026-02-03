@@ -9,7 +9,6 @@ on:
 env:
   AKS_RG: aks-dev-rg
   AKS_NAME: aks-dev
-  ACR_LOGIN_SERVER: acrdevayu2026512.azurecr.io
 
 jobs:
   deploy:
@@ -35,24 +34,14 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
 
-      # -------------------------
-      # Deploy MySQL (idempotent)
-      # -------------------------
       - name: Deploy MySQL
-        run: |
-          helm upgrade --install mysql ./helm/mysql
+        run: helm upgrade --install mysql ./helm/mysql
 
-      # -------------------------
-      # Deploy Spring Boot
-      # -------------------------
       - name: Deploy Spring Boot
         run: |
           helm upgrade --install springboot ./helm/springboot \
             --set image.tag=${{ github.event.workflow_run.head_sha }}
 
-      # -------------------------
-      # Deploy Angular
-      # -------------------------
       - name: Deploy Angular
         run: |
           helm upgrade --install angular ./helm/angular \
