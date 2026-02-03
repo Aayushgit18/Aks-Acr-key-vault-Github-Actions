@@ -1,0 +1,16 @@
+apiVersion: v2
+name: 3tier-umbrella
+description: Umbrella chart for Angular + Spring Boot + MySQL
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: mysql
+    version: 0.1.0
+    repository: "file://../mysql"
+  - name: springboot
+    version: 0.1.0
+    repository: "file://../springboot"
+  - name: angular
+    version: 0.1.0
+    repository: "file://../angular"

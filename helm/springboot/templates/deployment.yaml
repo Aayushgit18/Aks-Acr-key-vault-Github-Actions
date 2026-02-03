@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: springboot
+  template:
+    metadata:
+      labels:
+        app: springboot
+    spec:
+      containers:
+        - name: springboot
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
+
+          # 👇 Application configuration (NO secrets here)
+          env:
+            - name: DB_HOST
+              value: {{ .Values.mysql.host | quote }}
+            - name: DB_PORT
+              value: "{{ .Values.mysql.port }}"
+            - name: DB_USER
+              value: root
+            - name: DB_PASSWORD
+              value: ""
+
+          # 👇 Inject secret at runtime from CSI, then exec image ENTRYPOINT
+          command:
+            - sh
+            - -c
+            - |
+              export DB_PASSWORD=$(cat /mnt/secrets/{{ .Values.keyVault.secrets.rootPassword }});
+              exec "$@"
+            - --
+            - java
+            - -jar
+            - app.jar
+
+          volumeMounts:
+            - name: secrets-store
+              mountPath: /mnt/secrets
+              readOnly: true
+
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: mysql-azure-kv
+

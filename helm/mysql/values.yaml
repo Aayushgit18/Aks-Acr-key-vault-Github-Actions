@@ -1,0 +1,22 @@
+replicaCount: 1
+
+image:
+  repository: mysql
+  tag: "8.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3306
+
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClass: managed-csi
+
+keyVault:
+  name: kv-aks-dev-aayush1290
+  tenantId: aac42910-b03a-44c1-b372-7cee5c67a2d5
+  secrets:
+    rootPassword: mysql-root-password
+    database: mysql-database

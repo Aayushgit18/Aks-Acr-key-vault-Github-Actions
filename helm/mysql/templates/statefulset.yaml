@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: mysql
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 3306
+
+          # 👇 Declare env vars (values injected at runtime via CSI)
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: ""
+            - name: MYSQL_DATABASE
+              value: ""
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "no"
+
+          # 👇 Read secrets from Key Vault (mounted by CSI)
+          command:
+            - sh
+            - -c
+            - |
+              export MYSQL_ROOT_PASSWORD=$(cat /mnt/secrets/{{ .Values.keyVault.secrets.rootPassword }});
+              export MYSQL_DATABASE=$(cat /mnt/secrets/{{ .Values.keyVault.secrets.database }});
+              exec docker-entrypoint.sh mysqld
+
+          volumeMounts:
+            - name: secrets-store
+              mountPath: /mnt/secrets
+              readOnly: true
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: mysql-azure-kv
+
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: {{ .Values.persistence.storageClass }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size }}
+

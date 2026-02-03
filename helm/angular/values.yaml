@@ -1,0 +1,13 @@
+replicaCount: 1
+
+image:
+  repository: acrdevayu2026512.azurecr.io/angular-crud
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  port: 80
+
+ingress:
+  enabled: false
