@@ -12,7 +12,7 @@ service:
 mysql:
   host: mysql
   port: 3306
-  database: bookDatabase
+  database: bookdb
 
 keyVault:
   secrets:
