@@ -17,6 +17,8 @@ persistence:
 keyVault:
   name: kv-aks-dev-aayush1290
   tenantId: aac42910-b03a-44c1-b372-7cee5c67a2d5
+  identityClientId: 585cb9d9-7140-4184-a4e2-96f1a146f14f
+
   secrets:
     rootPassword: mysql-root-password
     database: mysql-database
