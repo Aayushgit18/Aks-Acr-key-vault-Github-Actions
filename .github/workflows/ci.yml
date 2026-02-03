@@ -45,7 +45,7 @@ jobs:
       # Build & Push Spring Boot (cached)
       # -------------------------
       - name: Build & Push Spring Boot image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./SpringCRUD
           push: true
@@ -59,7 +59,7 @@ jobs:
       # Build & Push Angular (cached)
       # -------------------------
       - name: Build & Push Angular image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./AngularCRUD
           push: true
