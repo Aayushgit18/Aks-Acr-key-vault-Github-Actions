@@ -21,4 +21,3 @@ COPY --from=build /app/dist/angular-crud /usr/share/nginx/html
 
 
 
-
