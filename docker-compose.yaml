@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: mybookcollection_db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: springCRUD
+      MYSQL_DATABASE: bookDatabase
+      MYSQL_USER: user1
+      MYSQL_PASSWORD: pass1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uuser1", "-ppass1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  spring-service:
+    build: ./SpringCRUD
+    container_name: mybookcollection_spring-service
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 3306
+      MYSQL_DATABASE: bookDatabase
+      MYSQL_USER: user1
+      MYSQL_PASSWORD: pass1
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: on-failure
+
+  adminer:
+    image: adminer
+    container_name: mybookcollection_adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+
+  angular-service:
+    build: ./AngularCRUD
+    container_name: mybookcollection_angular-service
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+#this is the repo
