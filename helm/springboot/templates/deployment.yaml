@@ -1,26 +1,50 @@
-containers:
-  - name: springboot
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-    imagePullPolicy: {{ .Values.image.pullPolicy }}
-    ports:
-      - containerPort: 8080
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot
+  labels:
+    app: springboot
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: springboot
+  template:
+    metadata:
+      labels:
+        app: springboot
+    spec:
+      containers:
+        - name: springboot
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 8080
 
-    env:
-      - name: SPRING_DATASOURCE_URL
-        value: "jdbc:mysql://{{ .Values.mysql.host }}:{{ .Values.mysql.port }}/{{ .Values.mysql.database }}"
-      - name: SPRING_DATASOURCE_USERNAME
-        value: root
-      - name: SPRING_DATASOURCE_PASSWORD
-        value: ""
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://{{ .Values.mysql.host }}:{{ .Values.mysql.port }}/{{ .Values.mysql.database }}"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: root
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: ""
 
-    command:
-      - sh
-      - -c
-      - |
-        export SPRING_DATASOURCE_PASSWORD=$(cat /mnt/secrets/{{ .Values.keyVault.secrets.rootPassword }});
-        exec java -jar app.jar
+          command:
+            - sh
+            - -c
+            - |
+              export SPRING_DATASOURCE_PASSWORD=$(cat /mnt/secrets/{{ .Values.keyVault.secrets.rootPassword }});
+              exec java -jar app.jar
 
-    volumeMounts:
-      - name: secrets-store
-        mountPath: /mnt/secrets
-        readOnly: true
+          volumeMounts:
+            - name: secrets-store
+              mountPath: /mnt/secrets
+              readOnly: true
+
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: mysql-azure-kv
