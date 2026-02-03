@@ -21,7 +21,7 @@ spec:
           ports:
             - containerPort: 8080
 
-          # 👇 Application configuration (NO secrets here)
+          # Application config (no secrets hardcoded)
           env:
             - name: DB_HOST
               value: {{ .Values.mysql.host | quote }}
@@ -34,17 +34,13 @@ spec:
             - name: DB_PASSWORD
               value: ""
 
-          # 👇 Inject secret at runtime from CSI, then exec image ENTRYPOINT
+          # ✅ Correct way to inject CSI secret and start Spring Boot
           command:
             - sh
             - -c
             - |
               export DB_PASSWORD=$(cat /mnt/secrets/{{ .Values.keyVault.secrets.rootPassword }});
-              exec "$@"
-            - --
-            - java
-            - -jar
-            - app.jar
+              exec java -jar app.jar
 
           volumeMounts:
             - name: secrets-store
