@@ -12,8 +12,13 @@ group = 'de.bach'
 version = '0.0.1-SNAPSHOT'
 
 /* ---------------- JAVA CONFIG ---------------- */
+
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
+
+tasks.withType(JavaCompile).configureEach {
+    options.release.set(17)
+}
 
 /* ---------------- QUALITY TOOLS ---------------- */
 
@@ -33,7 +38,7 @@ tasks.named("spotbugsTest") {
     enabled = false
 }
 
-/* SpotBugs reports */
+/* SpotBugs reports (Gradle 8 compatible) */
 tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
     reports {
         xml.required.set(false)
@@ -58,6 +63,9 @@ configurations {
 }
 
 dependencies {
+    /* SpotBugs annotations for @SuppressFBWarnings */
+    compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.6'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
