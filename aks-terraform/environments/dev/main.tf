@@ -41,6 +41,9 @@ module "aks" {
   name                = var.aks_name
   law_id              = module.monitoring.law_id
   acr_id              = module.acr.acr_id
+  key_vault_id        = module.key_vault.id
+  system_subnet_id    = module.network.system_subnet_id
+  user_subnet_id      = module.network.user_subnet_id
   tags                = var.tags
 }
 
