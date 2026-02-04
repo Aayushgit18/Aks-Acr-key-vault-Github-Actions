@@ -63,14 +63,15 @@ configurations {
 }
 
 dependencies {
-    /* SpotBugs annotations for @SuppressFBWarnings */
+    /* SpotBugs annotations */
     compileOnly 'com.github.spotbugs:spotbugs-annotations:4.8.6'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    /* Lombok – Java 21 compatible (CRITICAL FIX) */
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
