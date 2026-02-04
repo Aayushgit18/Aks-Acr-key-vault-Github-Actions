@@ -70,8 +70,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     /* Lombok – Java 21 compatible (CRITICAL FIX) */
-    compileOnly 'org.projectlombok:lombok:1.18.32'
-    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'org.projectlombok:lombok:1.18.42'
+    annotationProcessor 'org.projectlombok:lombok:1.18.42'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'mysql:mysql-connector-java'
