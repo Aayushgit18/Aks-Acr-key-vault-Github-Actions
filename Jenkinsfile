@@ -101,7 +101,7 @@ pipeline {
         stage('Post Deployment Verification') {
             steps {
                 postDeployCheck(
-                    deployment: 'spring-crud',
+                    deployment: 'springboot',
                     namespace: env.K8S_NAMESPACE
                 )
             }
