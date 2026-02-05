@@ -19,7 +19,7 @@ keyVault:
   tenantId: aac42910-b03a-44c1-b372-7cee5c67a2d5
 
   # 🔥 THIS MUST BE KUBELET CLIENT ID
-  identityClientId: 6e1da3d0-626b-4321-a6c1-8ed6c4800f00
+  identityClientId: a4ee0c6a-911a-497b-b830-5b5b25d3687c
 
   secrets:
     rootPassword: mysql-root-password1
