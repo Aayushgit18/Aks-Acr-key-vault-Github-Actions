@@ -22,5 +22,5 @@ keyVault:
   identityClientId: 6e1da3d0-626b-4321-a6c1-8ed6c4800f00
 
   secrets:
-    rootPassword: mysql-root-password
-    database: mysql-database
+    rootPassword: mysql-root-password1
+    database: mysql-database1
