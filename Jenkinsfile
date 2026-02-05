@@ -4,14 +4,18 @@ pipeline {
     agent any
 
     environment {
-        // Azure / AKS
+        // ---------- Azure / AKS ----------
         ACR_NAME        = credentials('ACR_NAME')
         ACR_LOGIN       = credentials('ACR_LOGIN_SERVER')
         AKS_NAME        = credentials('AKS_NAME')
         AKS_RG          = credentials('AKS_RG')
 
-        // Kubernetes
-        K8S_NAMESPACE   = 'default' 
+        // ---------- Kubernetes ----------
+        K8S_NAMESPACE   = 'default'
+
+        // ---------- Build Caching ----------
+        GRADLE_USER_HOME = "${WORKSPACE}/.gradle"
+        NPM_CONFIG_CACHE = "${WORKSPACE}/.npm"
     }
 
     stages {
