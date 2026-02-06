@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: angular
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-health-probe-request-path: "/"
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -9,4 +11,3 @@ spec:
       targetPort: 80
   selector:
     app: angular
-
