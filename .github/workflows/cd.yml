@@ -1,48 +1,50 @@
-name: CD - Deploy to AKS using Helm
+name: CD - Manual Deploy to AKS
 
 on:
-  workflow_run:
-    workflows: ["CI - Build and Push Images to ACR"]
-    types:
-      - completed
-
-env:
-  AKS_RG: aks-dev-rg
-  AKS_NAME: aks-dev
+  workflow_dispatch:    
+    inputs:
+      image_tag:
+        description: "Docker image tag to deploy (e.g. commit SHA or latest)"
+        required: true
+        default: "latest"
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
+    env:
+      AKS_RG: ${{ secrets.AKS_RG }}
+      AKS_NAME: ${{ secrets.AKS_NAME }}
+
     steps:
-      - name: Checkout source
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Login to Azure
+      - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Set AKS context
+      - name: Set AKS Context
         run: |
           az aks get-credentials \
             --resource-group $AKS_RG \
             --name $AKS_NAME \
-            --admin
+            --overwrite-existing
 
       - name: Install Helm
         uses: azure/setup-helm@v4
 
       - name: Deploy MySQL
-        run: helm upgrade --install mysql ./helm/mysql
+        run: |
+          helm upgrade --install mysql helm/mysql
 
       - name: Deploy Spring Boot
         run: |
-          helm upgrade --install springboot ./helm/springboot \
-            --set image.tag=${{ github.event.workflow_run.head_sha }}
+          helm upgrade --install springboot helm/springboot \
+            --set image.tag=${{ github.event.inputs.image_tag }}
 
       - name: Deploy Angular
         run: |
-          helm upgrade --install angular ./helm/angular \
-            --set image.tag=${{ github.event.workflow_run.head_sha }}
+          helm upgrade --install angular helm/angular \
+            --set image.tag=${{ github.event.inputs.image_tag }}
