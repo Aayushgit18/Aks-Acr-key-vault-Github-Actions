@@ -18,8 +18,8 @@ keyVault:
   name: kv-aks-dev-aayush1290
   tenantId: aac42910-b03a-44c1-b372-7cee5c67a2d5
 
-  # 🔥 THIS MUST BE KUBELET CLIENT ID
-  identityClientId: a4ee0c6a-911a-497b-b830-5b5b25d3687c
+  #  THIS MUST BE KUBELET CLIENT ID
+  identityClientId: 75e65c28-33d2-4706-9468-cc99877c4215
 
   secrets:
     rootPassword: mysql-root-password1
