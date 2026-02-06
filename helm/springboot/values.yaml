@@ -16,4 +16,4 @@ mysql:
 
 keyVault:
   secrets:
-    rootPassword: mysql-root-password
+    rootPassword: mysql-root-password1
