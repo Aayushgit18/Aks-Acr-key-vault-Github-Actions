@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: acrdevayu2026512.azurecr.io/spring-crud
   tag: "latest"
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 service:
   type: ClusterIP
